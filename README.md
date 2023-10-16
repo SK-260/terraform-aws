@@ -1,1 +1,2 @@
-# Terraform code for vprofile project
+# AWS Two Tier Architecture with Terraform
+

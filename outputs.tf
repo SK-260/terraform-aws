@@ -8,5 +8,5 @@ output "db_instance_address" {
 
 output "lb_dns_name" {
   description = "The DNS name of the Load Balancer"
-  value = aws_lb.project-alb.dns_name
+  value       = aws_lb.project-alb.dncles_name
 }
