@@ -1,6 +1,6 @@
 # Create the VPC
 resource "aws_vpc" "VPC" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = var.vpc-cidr
   instance_tenancy = "default"
 
   tags = {
@@ -24,17 +24,6 @@ resource "aws_subnet" "publicsub-2" {
   availability_zone = "ap-south-1b"
   map_public_ip_on_launch = true
 
-  tags = {
-    name = "publicsub-2"
-  }
-}
-
-resource "aws_subnet" "publicsub-2" {
-  vpc_id = aws_vpc.VPC.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "ap-south-1b"
-  map_public_ip_on_launch = true
-  
   tags = {
     name = "publicsub-2"
   }

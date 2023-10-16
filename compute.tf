@@ -49,14 +49,8 @@ resource "aws_instance" "web1" {
   vpc_security_group_ids = [ aws_security_group.public-sg.id ]
   subnet_id = aws_subnet.publicsub-1.id
   associate_public_ip_address = true
-  user_data = <<-EOF
-    #!/bin/bash
-    yum update -y
-    yum install httpd -y
-    systemctl start httpd
-    systemctl enable httpd
-    echo "<html><body><h1>Hey there! Go refill your coffee. We have more to do!</h1></body></html>" > /var/www/html/index.html
-    EOF
+  user_data = file("${path.module}/userdata_web1.sh")
+  
   tags = {
     name = "web1_instance"
   }
@@ -69,14 +63,7 @@ resource "aws_instance" "web2" {
   vpc_security_group_ids = [ aws_security_group.public-sg.id ]
   subnet_id = aws_subnet.publicsub-2.id
   associate_public_ip_address = true
-  user_data = <<-EOF
-    #!/bin/bash
-    yum update -y
-    yum install httpd -y
-    systemctl start httpd
-    systemctl enable httpd
-    echo "<html><body><h1>Hey fellow Terraform learners!</h1></body></html>" > /var/www/html/index.html
-    EOF
+  user_data = file("${path.module}/userdata_web2.sh")
   tags = {
     name = "web2_instance"
   }
