@@ -39,3 +39,14 @@ variable "db-password" {
   description = "Password for the RDS instance"
   sensitive   = true
 }
+
+variable "availability_zone" {
+  description = "Varlous availability zones"
+  type        = list(string)
+  default     = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
+}
+
+variable "AMIS" {
+  description = "Ami for the EC2 instance"
+  default     = "ami-0a5ac53f63249fba0"
+}

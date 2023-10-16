@@ -8,10 +8,11 @@ resource "aws_vpc" "VPC" {
   }
 }
 
+# Create the public subnet
 resource "aws_subnet" "publicsub-1" {
   vpc_id            = aws_vpc.VPC.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "ap-south-1a"
+  cidr_block        = var.public-subnet[0]
+  availability_zone = var.availability_zone[0]
 
   tags = {
     name = "publicsub-1"
@@ -20,8 +21,8 @@ resource "aws_subnet" "publicsub-1" {
 
 resource "aws_subnet" "publicsub-2" {
   vpc_id                  = aws_vpc.VPC.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "ap-south-1b"
+  cidr_block              = var.public-subnet[1]
+  availability_zone       = var.availability_zone[1]
   map_public_ip_on_launch = true
 
   tags = {
@@ -29,10 +30,11 @@ resource "aws_subnet" "publicsub-2" {
   }
 }
 
+# Create Private subnets
 resource "aws_subnet" "privatesub-1" {
   vpc_id                  = aws_vpc.VPC.id
-  cidr_block              = "10.0.3.0/24"
-  availability_zone       = "ap-south-1a"
+  cidr_block              = var.private-subnet[0]
+  availability_zone       = var.availability_zone[0]
   map_public_ip_on_launch = false
 
   tags = {
@@ -42,8 +44,8 @@ resource "aws_subnet" "privatesub-1" {
 
 resource "aws_subnet" "privatesub-2" {
   vpc_id                  = aws_vpc.VPC.id
-  cidr_block              = "10.0.4.0/24"
-  availability_zone       = "ap-south-1b"
+  cidr_block              = var.private-subnet[1]
+  availability_zone       = var.availability_zone[1]
   map_public_ip_on_launch = false
 
   tags = {
@@ -51,6 +53,7 @@ resource "aws_subnet" "privatesub-2" {
   }
 }
 
+# Create Internet Gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.VPC.id
 
@@ -59,6 +62,7 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
+# Create Route Tabel for the internet Gateway
 resource "aws_route_table" "project-routetable" {
   vpc_id = aws_vpc.VPC.id
 
@@ -72,6 +76,7 @@ resource "aws_route_table" "project-routetable" {
   }
 }
 
+# Connect Public subnets to the route Table
 resource "aws_route_table_association" "public-route-1" {
   subnet_id      = aws_subnet.publicsub-1.id
   route_table_id = aws_route_table.project-routetable.id
@@ -82,6 +87,7 @@ resource "aws_route_table_association" "public-route-2" {
   route_table_id = aws_route_table.project-routetable.id
 }
 
+# Create Security groups
 resource "aws_security_group" "public-sg" {
   name        = "public-sg"
   description = "Allow web and ssh traffic"

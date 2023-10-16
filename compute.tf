@@ -1,3 +1,4 @@
+# Create the ALB
 resource "aws_lb" "project-alb" {
   name               = "ALB"
   internal           = false
@@ -6,6 +7,7 @@ resource "aws_lb" "project-alb" {
   subnets            = [aws_subnet.publicsub-1.id, aws_subnet.publicsub-2.id]
 }
 
+# Create the ALB target Group
 resource "aws_lb_target_group" "project-tg" {
   name     = "project-tg"
   port     = 80
@@ -15,6 +17,7 @@ resource "aws_lb_target_group" "project-tg" {
   depends_on = [aws_vpc.VPC]
 }
 
+# Create the target attachments
 resource "aws_lb_target_group_attachment" "tg-attach1" {
   target_group_arn = aws_lb_target_group.project-tg.arn
   target_id        = aws_instance.web1.id
@@ -31,6 +34,7 @@ resource "aws_lb_target_group_attachment" "tg-attach2" {
   depends_on = [aws_instance.web2]
 }
 
+#Create the listner
 resource "aws_lb_listener" "listener_lb" {
   load_balancer_arn = aws_lb.project-alb.arn
   port              = "80"
@@ -42,10 +46,11 @@ resource "aws_lb_listener" "listener_lb" {
   }
 }
 
+# Create the EC2 instance
 resource "aws_instance" "web1" {
-  ami                         = "ami-0a5ac53f63249fba0"
-  instance_type               = "t2.micro"
-  availability_zone           = "ap-south-1a"
+  ami                         = var.AMIS
+  instance_type               = var.web_instance_type
+  availability_zone           = var.availability_zone[0]
   vpc_security_group_ids      = [aws_security_group.public-sg.id]
   subnet_id                   = aws_subnet.publicsub-1.id
   associate_public_ip_address = true
@@ -57,9 +62,9 @@ resource "aws_instance" "web1" {
 }
 
 resource "aws_instance" "web2" {
-  ami                         = "ami-0a5ac53f63249fba0"
-  instance_type               = "t2.micro"
-  availability_zone           = "ap-south-1b"
+  ami                         = var.AMIS
+  instance_type               = var.web_instance_type
+  availability_zone           = var.availability_zone[1]
   vpc_security_group_ids      = [aws_security_group.public-sg.id]
   subnet_id                   = aws_subnet.publicsub-2.id
   associate_public_ip_address = true
@@ -69,20 +74,22 @@ resource "aws_instance" "web2" {
   }
 }
 
+# Configure the database Private subnet group
 resource "aws_db_subnet_group" "db-subnet" {
   name       = "db-subnet"
   subnet_ids = [aws_subnet.privatesub-1.id, aws_subnet.privatesub-2.id]
 }
 
+#Create the data base instance
 resource "aws_db_instance" "project_db" {
   allocated_storage      = 5
   engine                 = "mysql"
   engine_version         = "5.7"
-  instance_class         = "db.t3.micro"
+  instance_class         = var.db_instance_class
   identifier             = "db-instance"
   db_name                = "project_db"
-  username               = "admin"
-  password               = "Admin@123"
+  username               = var.db-username
+  password               = var.db-password
   db_subnet_group_name   = aws_db_subnet_group.db-subnet.id
   vpc_security_group_ids = [aws_security_group.private-sg.id]
   publicly_accessible    = false
