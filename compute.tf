@@ -62,7 +62,7 @@ resource "aws_instance" "web1" {
   }
 }
 
-resource "aws_instance" "web1" {
+resource "aws_instance" "web2" {
   ami = "ami-0a5ac53f63249fba0"
   instance_type = "t2.micro"
   availability_zone = "ap-south-1b"
