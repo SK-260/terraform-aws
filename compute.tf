@@ -87,7 +87,7 @@ resource "aws_db_subnet_group" "db-subnet" {
   subnet_ids = [ aws_subnet.privatesub-1.id, aws_subnet.privatesub-2.id ]
 }
 
-resource "aws_db_instance" "proect_db" {
+resource "aws_db_instance" "project_db" {
   allocated_storage = 5
   engine = "mysql"
   engine_version = "5.7"
